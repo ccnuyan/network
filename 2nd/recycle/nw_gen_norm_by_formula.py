@@ -1,7 +1,8 @@
-import networkx as nx
-import numpy as np 
-import math as math
 import itertools as itertools
+import math as math
+
+import networkx as nx
+import numpy as np
 from scipy.stats import norm
 
 
@@ -16,7 +17,7 @@ def generate(BIGN, M, MIU, DELTA, path):
 
     count = 0
 
-    C = (BIGN-1)*np.power(2*np.pi,-0.5)
+    C = BIGN*np.power(2*np.pi, -0.5)
 
     rands = sorted(DELTA * np.random.randn(BIGN) + MIU, reverse=True)
 
@@ -27,7 +28,7 @@ def generate(BIGN, M, MIU, DELTA, path):
 
     for x in names:
         vx = G.node[x]['value']
-        fm = C*np.power(np.e,-0.5*np.abs(vx*vx)) - (BIGN-1)*norm.cdf(-vx)*vx
+        fm = C*np.power(np.e,-0.5*vx*vx) - BIGN*norm.cdf(-vx)*vx
 
         for y in names:
             if x==y or vx>G.node[y]['value']:
@@ -38,7 +39,7 @@ def generate(BIGN, M, MIU, DELTA, path):
 
             fz = np.abs(vx-vy)
 
-            rand2 = fz*M / (fm + fz)
+            rand2 = fz*M / fm
 
             if rand1<rand2:
                 G.add_edge(x,y)
