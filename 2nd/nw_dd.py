@@ -33,23 +33,26 @@ def drawdd(path, color, marker, linestyle):
 # drawdd("ykt/data.graphml", 'r', 'o')
 # plt.savefig("ykt/data.graphml.png")
 
-# drawdd("data/nw_gen_1_sf.graphml", 'black', '+', 'solid')
-# drawdd("data/nw_gen_2_sf.graphml", 'black', 'x', 'solid')
+drawdd("data/nw_gen_1_expon.graphml", 'black', '+', 'solid')
+drawdd("data/nw_gen_2_expon.graphml", 'black', 'x', 'solid')
 
-drawdd("data/nw_gen_1_norm.graphml", 'r', '+', 'dotted')
-drawdd("data/nw_gen_2_norm.graphml", 'r', 'x', 'dashdot')
+drawdd("data/nw_gen_1_norm.graphml", 'r', '+', 'solid')
+drawdd("data/nw_gen_2_norm.graphml", 'r', 'x', 'solid')
 
-drawdd("data/nw_gen_1_uniform.graphml", 'g', '+', 'dotted')
-drawdd("data/nw_gen_2_uniform.graphml", 'g', 'x', 'dotted')
+# drawdd("data/nw_gen_1_norm.graphml", 'r', '+', 'solid')
+# drawdd("data/nw_gen_2_norm.graphml", 'r', 'x', 'solid')
 
-drawdd("data/nw_gen_1_bn.graphml", 'b', '+', 'dotted')
-drawdd("data/nw_gen_2_bn.graphml", 'b', 'x', 'dotted')
+# drawdd("data/nw_gen_1_uniform.graphml", 'g', '+', 'dotted')
+# drawdd("data/nw_gen_2_uniform.graphml", 'g', 'x', 'dotted')
 
-drawdd("data/nw_gen_1_ps.graphml", 'pink', '+', 'dotted')
-drawdd("data/nw_gen_2_ps.graphml", 'pink', 'x', 'dotted')
+# drawdd("data/nw_gen_1_bn.graphml", 'b', '+', 'dotted')
+# drawdd("data/nw_gen_2_bn.graphml", 'b', 'x', 'dotted')
 
-drawdd("data/nw_gen_1_expon.graphml", 'cyan', '+', 'dotted')
-drawdd("data/nw_gen_2_expon.graphml", 'cyan', '+', 'dotted')
+# drawdd("data/nw_gen_1_ps.graphml", 'pink', '+', 'dotted')
+# drawdd("data/nw_gen_2_ps.graphml", 'pink', 'x', 'dotted')
+
+# drawdd("data/nw_gen_1_expon.graphml", 'cyan', '+', 'dotted')
+# drawdd("data/nw_gen_2_expon.graphml", 'cyan', '+', 'dotted')
 
 # drawdd("data/nw_gen_1_beta.graphml", 'r', '+')
 # drawdd("data/nw_gen_2_beta.graphml", 'g', '+')
@@ -66,4 +69,6 @@ plt.axis('off')
 # nx.draw_networkx_nodes(Gcc,pos,node_size=20)
 # nx.draw_networkx_edges(Gcc,pos,alpha=0.4)
 
+
+plt.savefig("1.png")
 plt.show()

@@ -11,7 +11,7 @@ G = nx.Graph()
 G.add_nodes_from(L)
 
 names = G.nodes()
-rands = [15,13,8,7,5,2]
+rands = [15, 13, 8, 7, 5, 2]
 
 print(rands)
 

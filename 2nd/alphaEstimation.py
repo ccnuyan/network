@@ -16,8 +16,8 @@ def estimate(G, Min):
         if degrees[x] > Min:
             count += 1
             total += np.log(degrees[x]/Min)
-    
-    return 1 + count * (1/total)
+
+    return 1 + count * (1 / total)
 
 def kstest(min, path):
 
@@ -39,8 +39,15 @@ def kstest(min, path):
         alpha = estimate(G, xmin)
 
         diffmax = 0
+
+        sumofx = 0
+
+        for k in ds.keys():
+            if k > xmin:
+                sumofx += ds[k]
+
         for k in dset:
-            diff = pxofk(alpha, xmin, k)
+            diff = np.abs(ds[k]/sumofx - pxofk(alpha, xmin, k))
             if diffmax < diff:
                 diffmax = diff
 
@@ -51,8 +58,19 @@ def kstest(min, path):
 
 # alpha = estimate(2, "data/nw_gen_1_norm.graphml")
 
-ret = kstest(2, "data/nw_gen_1_sf.graphml")
+ret = kstest(2, "data/nw_gen_1_norm.graphml")
+
+diffx = 0
+mkey = 0
+for key in ret.keys():
+    if diffx == 0:
+        mkey = key
+        diffx = ret[key]['diff']
+    elif ret[key]['diff'] < diffx:
+        diffx = ret[key]['diff']
+        mkey = key
 
 print(ret)
-
+print(mkey)
+print(ret[mkey])
 # print(alpha)
