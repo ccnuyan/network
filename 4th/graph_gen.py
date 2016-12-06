@@ -31,7 +31,7 @@ def generate(BIGN, bottom, top, informed, path):
 
     nx.write_graphml(G, path)
 
-N_POINTS = 1000
-Informed = 20
+N_POINTS = 100
+Informed = 100
 
 generate(N_POINTS, 0, 1, Informed, 'data/uniform_' + str(Informed) + 'in' + str(N_POINTS) + 'informed.graphml')

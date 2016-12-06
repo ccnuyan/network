@@ -1,14 +1,18 @@
 import json
+import math
+
 import matplotlib.pyplot as plt
 import networkx as nx
 import scipy.stats as stats
 
 
 class Experiment(object):
-    def __init__(self, path, cfd_radius, omega, likelyhood_function=None, forcast_function=None, signal_possibility=None):
+    def __init__(self, path, omega, link_s, link_d, cfd_radius, likelyhood_function=None, forcast_function=None, signal_possibility=None):
         self.path = path
-        self.cfd_radius = cfd_radius
         self.omega = omega
+        self.cfd_radius = cfd_radius
+        self.link_s = link_s
+        self.link_d = link_d
 
         self.G = nx.read_graphml(path)
 
@@ -40,7 +44,7 @@ class Experiment(object):
 
         # signal possibility
         if signal_possibility is None:
-            sp_threshold = 0.7
+            sp_threshold = 0.8
             self.signal_possibility = {'H': sp_threshold, 'T': 1 - sp_threshold}
         else:
             self.signal_possibility = signal_possibility
@@ -53,23 +57,63 @@ class Experiment(object):
             self.G.node[node]['thita2History'] = [self.G.node[node]['thita2']]
 
     def __str___(self):
-        return 'experiment 3'
+        return 'experiment 5'
 
     def link(self):
-        for node_s in self.G:
-            for node_t in self.G:
-                if node_t == node_s:
-                    continue
+        to_be_removed = []
+        for edge in self.G.edges():
+            to_be_removed.append(edge)
+        self.G.remove_edges_from(to_be_removed)
 
-                distance = abs(self.G.node[node_s]['thita1'] - self.G.node[node_t]['thita1'])
+        toBeAdded = []
 
-                if distance > self.cfd_radius:
-                    if node_t in self.G.neighbors(node_s):
-                        self.G.remove_edge(node_s, node_t)
+        # in radius
 
-                if distance < self.cfd_radius:
-                    if node_t not in self.G.neighbors(node_s):
-                        self.G.add_edge(node_s, node_t)
+        if self.link_s != 0 and self.cfd_radius != 0:
+            for node_s in self.G:
+
+                nodes_in_radius = []
+
+                for node_t in self.G:
+                    if node_t == node_s:
+                        continue
+                    distance = abs(self.G.node[node_s]['thita1'] - self.G.node[node_t]['thita1'])
+                    if distance < self.cfd_radius and node_t not in self.G.neighbors(node_s):
+                        nodes_in_radius.append(node_t)
+
+                count = 0
+                if len(nodes_in_radius) > self.link_s:
+                    while count < self.link_s:
+                        rand = math.floor(stats.uniform.rvs(loc=0, scale=len(nodes_in_radius)))
+                        if (node_s, nodes_in_radius[rand]) not in toBeAdded and nodes_in_radius[rand] not in self.G.neighbors(node_s):
+                            toBeAdded.append((node_s, nodes_in_radius[rand]))
+                            count += 1
+                else:
+                    toBeAdded.extend([(node_s, node) for node in nodes_in_radius])
+
+        if self.link_d != 0:
+            for node_s in self.G:
+                cdf = []
+                floor = 0
+                ceil = 0
+                for node_t in self.G:
+                    if node_t == node_s:
+                        continue
+
+                    ceil += abs(self.G.node[node_t]['thita1'] - self.G.node[node_s]['thita1'])
+                    cdf.append({'id': node_t, 'floor': floor, 'ceil': ceil})
+                    floor = ceil
+
+                count = 0
+                while count < self.link_d:
+                    rand = stats.uniform.rvs(loc=0, scale=ceil)
+                    for interium in cdf:
+                        if (node_s, interium['id']) not in toBeAdded and interium['floor'] < rand and rand < interium['ceil']:
+                            toBeAdded.append((node_s, interium['id']))
+                            count += 1
+                            break
+        # print(toBeAdded)
+        self.G.add_edges_from(toBeAdded)
         return
 
     def getSignal(self):
@@ -132,8 +176,8 @@ class Experiment(object):
 
 
     def draw_thita1(self, show):
-        fig = plt.figure(0)
         plt.title("Beliefs of state 1")
+        plt.ylabel("r=" + str(self.cfd_radius) + ' omega=' + str(self.omega))
         plt.xlabel("steps")
 
         for node in self.G:
@@ -148,11 +192,11 @@ class Experiment(object):
                 count += 1
 
             if 'informed' in self.G.node[node]:
-                plt.semilogx(xAxis, yAxis, linestyle='solid')
+                plt.semilogx(xAxis, yAxis, linestyle='solid', color='r')
             else:
-                plt.semilogx(xAxis, yAxis, linestyle='dotted')
+                plt.semilogx(xAxis, yAxis, linestyle='dotted', color='b')
 
-        plt.savefig('thita1_radius' + str(self.cfd_radius) + '_omega' + str(self.omega) + ".png")
+        plt.savefig('pngs/thita1_pts' + str(self.G.number_of_nodes()) + '_s' + str(self.link_s) + '_d' + str(self.link_d) + '_o' + str(self.omega) + '_r' + str(self.cfd_radius) + ".png")
         if show:
             plt.show()
         else:
@@ -160,7 +204,7 @@ class Experiment(object):
 
     def draw_thita2(self, show):
         plt.title("Beliefs of state 2")
-        plt.ylabel("r=0.3")
+        plt.ylabel("r=" + str(self.cfd_radius) + ' omega=' + str(self.omega))
         plt.xlabel("steps")
 
         for node in self.G:
@@ -175,18 +219,17 @@ class Experiment(object):
                 count += 1
 
             if 'informed' in self.G.node[node]:
-                plt.semilogx(xAxis, yAxis, linestyle='solid')
+                plt.semilogx(xAxis, yAxis, linestyle='solid', color='r')
             else:
-                plt.semilogx(xAxis, yAxis, linestyle='dotted')
+                plt.semilogx(xAxis, yAxis, linestyle='dotted', color='b')
 
-        plt.savefig('thita2_radius' + str(self.cfd_radius) + '_omega' + str(self.omega) + ".png")
+        plt.savefig('pngs/thita2_pts' + str(self.G.number_of_nodes()) + '_s' + str(self.link_s) + '_d' + str(self.link_d) + '_o' + str(self.omega) + '_r' + str(self.cfd_radius) + ".png")
         if show:
             plt.show()
         else:
             plt.close('all')
 
     def show_degree_sequence(self, show):
-        fig = plt.figure(0)
         degree_sequence = sorted(nx.degree(self.G).values(), reverse=True) # degree sequence
 
         ccdfx = []
@@ -197,17 +240,16 @@ class Experiment(object):
         for item in dset:
             ccdfx.append(item)
             ccdfy.append(degree_sequence.count(item))
-        
-        plt.plot(ccdfx, ccdfy)
 
-        plt.savefig('dd_radius' + str(self.cfd_radius) + '_omega' + str(self.omega) + ".png")
+        plt.loglog(ccdfx, ccdfy)
+
+        plt.savefig('pngs/dd_points' + str(self.G.number_of_nodes()) + '_s' + str(self.link_s) + '_d' + str(self.link_d) + '_o' + str(self.omega) + '_r' + str(self.cfd_radius) + ".png")
 
         if show:
             plt.show()
         else:
             plt.close('all')
 
-    
     def finalize(self):
         for node in self.G:
             self.G.node[node]['thita1History'] = json.dumps(self.G.node[node]['thita1History'])
