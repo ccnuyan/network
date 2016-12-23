@@ -1,6 +1,5 @@
 import math
 import networkx as nx
-import numpy as np
 import scipy.stats as stats
 
 def generate(BIGN, bottom, top, informed, path):
@@ -32,6 +31,6 @@ def generate(BIGN, bottom, top, informed, path):
     nx.write_graphml(G, path)
 
 N_POINTS = 100
-Informed = 100
+Informed = 1
 
 generate(N_POINTS, 0, 1, Informed, 'data/uniform_' + str(Informed) + 'in' + str(N_POINTS) + 'informed.graphml')

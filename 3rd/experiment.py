@@ -40,7 +40,7 @@ class Experiment(object):
 
         # signal possibility
         if signal_possibility is None:
-            sp_threshold = 0.7
+            sp_threshold = 0.8
             self.signal_possibility = {'H': sp_threshold, 'T': 1 - sp_threshold}
         else:
             self.signal_possibility = signal_possibility

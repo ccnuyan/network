@@ -1,2 +1,4 @@
+[TYPECHECK]
+ignored-modules = numpy
 [MESSAGES CONTROL]
-disable=C0103,E1101,C0111,C0301
+disable=C0301
