@@ -63,7 +63,6 @@ class Experiment(object):
             gnode['thita1History'] = []
             gnode['ratioHistory'] = []
 
-
             if count < self.informed:
                 gnode['informed'] = True
             elif count < self.informed + self.middle:
@@ -89,7 +88,6 @@ class Experiment(object):
             gnode['thita0History'].append(gnode['thita0'])
             gnode['thita1History'].append(gnode['thita1'])
             gnode['ratioHistory'].append(gnode['ratio'])
-
 
     def likelyhood_function(self, node):
         '''
@@ -212,9 +210,9 @@ class Experiment(object):
 
         self.learning_rule = 'pl'
 
-        signal = self.get_signal()
-
         for node in self.graph:
+
+            self.get_signal()
 
             mit = self.likelyhood_function(node)
 
@@ -253,9 +251,9 @@ class Experiment(object):
 
         self.learning_rule = 'll'
 
-        signal = self.get_signal()
-
         for node in self.graph:
+
+            self.get_signal()
 
             gnode = self.graph.node[node]
 
@@ -316,11 +314,11 @@ class Experiment(object):
                 count += 1
 
             if 'informed' in self.graph.node[node]:
-                plt.plot(x_axis, y_axis, linestyle='dotted', color='g')
+                plt.semilogx(x_axis, y_axis, linestyle='dotted', color='g')
             if 'middle' in self.graph.node[node]:
-                plt.plot(x_axis, y_axis, linestyle='dotted', color='b')
+                plt.semilogx(x_axis, y_axis, linestyle='dotted', color='b')
             if 'uninformed' in self.graph.node[node]:
-                plt.plot(x_axis, y_axis, linestyle='dotted', color='r')
+                plt.semilogx(x_axis, y_axis, linestyle='dotted', color='r')
 
         plt.savefig('t%(number)s-%(learning_rule)s-%(steps)s%(cfd_radius)'
                     's%(omega)s%(tp)s_%(pi00)s%(pi11)s%(pu00)s%(pu11)s.png' %
@@ -340,7 +338,6 @@ class Experiment(object):
             plt.show()
         else:
             plt.close('all')
-
 
     def show_degree_sequence(self, show):
         '''
@@ -370,7 +367,7 @@ class Experiment(object):
         else:
             plt.close('all')
 
-    def draw_ratio(self,show):
+    def draw_ratio(self, show):
         '''
         plot
         '''

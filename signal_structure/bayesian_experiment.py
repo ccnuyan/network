@@ -83,6 +83,8 @@ class Experiment(object):
         # diff = cond0 - cond1 = (1 - a - b) * (1 - a - b) > 0
         # so cond0 > cond1
 
+        # a:p10, b:p01 d:p0
+
         print('(1 - a - b):%s' % (1 - a - b))
         print('(1 - a - b) * (d - b):%s' % cond0)
         print('(1 - a - b) * (a + d - 1):%s' % cond1)
